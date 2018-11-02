@@ -142,13 +142,15 @@ let password = req.body.password;
 // console.log(password);
 if(!email || !password) {
   res.status(403).send('missing email/password');
-}  else if(doesUserExist(email)) {
-    if(users[user].email === email && users[user].password === password){
-      res.cookie('user_id', users[user].id);
+}  else if(doesUserExist(email) && doesPasswordMatch(password)) {
 
-      res.redirect('/');
+      for(let user in users){
+         if(users[user].email === email){
+      res.cookie('user_id', users[user].id);
     }
-  } else {res.status(403).send('email not registered')
+  }
+      res.redirect('/');
+    } else {res.status(403).send('email not registered')
 }
 });
 
@@ -162,6 +164,14 @@ app.post("/logout", (req, res) => {
 function doesUserExist(email){
   for (let user in users) {
     if(users[user].email === email){
+      return true
+    }
+  }
+  return false
+}
+function doesPasswordMatch(password){
+  for (let user in users) {
+    if(users[user].password === password){
       return true
     }
   }

@@ -57,7 +57,8 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"],
+    username: req.cookies["user_id"],
+    users: users
    };
   res.render("urls_index", templateVars);
 });
@@ -79,7 +80,8 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"]
+    username: req.cookies["user_id"],
+    users: users
   };
   res.render("urls_show", templateVars);
 });
@@ -114,7 +116,7 @@ let username = req.body.username;
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect("/urls")
 })
 

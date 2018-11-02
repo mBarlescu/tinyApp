@@ -5,7 +5,7 @@
 </head>
 <body>
     <% if(username){ %>
-    <h1>hello <%= username %> </h1>
+    <h1>hello <%= users[username].email %> </h1>
     <form method ="POST" action ="/logout">
       <button>logout</button>
     </form>

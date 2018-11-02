@@ -12,16 +12,18 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+
+
 let users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "asdf"
   },
  "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: "asdf"
   }
 }
 
@@ -29,6 +31,7 @@ var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
 
 function generateRandomString() {
    var text = "";
@@ -121,15 +124,59 @@ app.post("/urls/:id/update", (req, res) => {
   res.redirect(`http://localhost:8080/urls/${shortURL}`)
 });
 
+
+
+
+
+
 app.post("/login", (req, res) => {
-let username = req.body.email;
-    res.cookie("username", username);
-    res.redirect("/urls");
+let email = req.body.email;
+let password = req.body.password;
+
+// console.log(email);
+
+// console.log(password);
+if(email && password) {
+  for(let user in users) {
+    // console.log("email: " + email);
+    //   console.log("users[user].email: " + users[user].email);
+    if(users[user].email === email && users[user].password === password){
+      console.log("fuq ya bud")
+      res.cookie('user_id', users[user].id)
+      res.redirect('/')
+      // console.log("user = " + user)
+      // console.log("password = " + users[user].password)
+    }
+    else{
+    res.status(403).send('password invalid');
+  }
+}
+}
+  // res.send('error 403: please provide an email/password.')
+
+// check if there is an email and password entered
+// check if the email matches an email in the database
+// for loop through the database
+
+// if the email doesn't exist - errorrr
+// check if the password matches the password assigned to that user
+// if they match - redirect to "/"
+// if they don't match - errorrr
+
+
+
+
+// let id = generateRandomString();
+    // res.cookie("user_id", email);
+    // res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
+  console.log(req.cookie)
   res.clearCookie('user_id');
   res.redirect("/urls")
+
+
 })
 
 app.post("/register", (req, res) => {
@@ -147,14 +194,17 @@ app.post("/register", (req, res) => {
     }
   }
 
+
   let id = generateRandomString();
 
   res.cookie('user_id', id)
   users[id] = {id, email, password}
-  console.log(users[id])
+  console.log(users[id]);
+  console.log(users);
   res.redirect("/urls")
-})
+});
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
-});
+})

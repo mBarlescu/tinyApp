@@ -118,6 +118,29 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls")
 })
 
+app.post("/register", (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password;
+
+  if(!email || !password){
+    res.send('Error 400: please provide an email/password.');
+  } else {
+    for (let user in users) {
+      console.log(users[user].email === email);
+      if (users[user].email === email){
+        return res.send('Error 400: this email is already in use.')
+      }
+    }
+  }
+
+  let id = generateRandomString();
+
+  res.cookie('user_id', id)
+  users[id] = {id, email, password}
+  console.log(users[id])
+  res.redirect("/urls")
+})
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });

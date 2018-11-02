@@ -6,13 +6,18 @@
 <body>
     <% if(username){ %>
     <h1>hello <%= users[username].email %> </h1>
+    <form method="GET" action="/register">
+      <button>register</button>
+    </form>
     <form method ="POST" action ="/logout">
       <button>logout</button>
     </form>
     <% } else { %>
-    <form method="POST" action="/login">
-      <input type="text" name="username" placeholder="login">
-      <button>submit</button>
+    <form method="GET" action="/login">
+      <button>login</button>
+    </form>
+    <form method="GET" action="/register">
+      <button>register</button>
     </form>
     <% } %>
 </body>

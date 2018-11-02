@@ -77,6 +77,10 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
+  res.render("login")
+})
+
+app.get("/login", (req, res) => {
   let templateVars = {
     username: req.cookies["user_id"],
     users: users
@@ -118,7 +122,7 @@ app.post("/urls/:id/update", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-let username = req.body.username;
+let username = req.body.email;
     res.cookie("username", username);
     res.redirect("/urls");
 });

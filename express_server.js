@@ -67,7 +67,11 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+    user_id: req.cookies["user_id"],
+    users: users
+  }
+  res.render("urls_new", templateVars);
 });
 
 app.get("/register", (req, res) => {
@@ -136,39 +140,16 @@ let password = req.body.password;
 // console.log(email);
 
 // console.log(password);
-if(email && password) {
-  for(let user in users) {
-    // console.log("email: " + email);
-    //   console.log("users[user].email: " + users[user].email);
+if(!email || !password) {
+  res.status(403).send('missing email/password');
+}  else if(doesUserExist(email)) {
     if(users[user].email === email && users[user].password === password){
       res.cookie('user_id', users[user].id);
+
       res.redirect('/');
-      // console.log("user = " + user)
-      // console.log("password = " + users[user].password)
     }
-  }
+  } else {res.status(403).send('email not registered')
 }
-  else{
-    res.status(403).send('password invalid');
-}
-
-  // res.send('error 403: please provide an email/password.')
-
-// check if there is an email and password entered
-// check if the email matches an email in the database
-// for loop through the database
-
-// if the email doesn't exist - errorrr
-// check if the password matches the password assigned to that user
-// if they match - redirect to "/"
-// if they don't match - errorrr
-
-
-
-
-// let id = generateRandomString();
-    // res.cookie("user_id", email);
-    // res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
@@ -178,6 +159,14 @@ app.post("/logout", (req, res) => {
 
 
 })
+function doesUserExist(email){
+  for (let user in users) {
+    if(users[user].email === email){
+      return true
+    }
+  }
+  return false
+}
 
 app.post("/register", (req, res) => {
   let email = req.body.email;
@@ -185,23 +174,18 @@ app.post("/register", (req, res) => {
 
   if(!email || !password){
     res.send('Error 400: please provide an email/password.');
-  } else {
-    for (let user in users) {
-      console.log(users[user].email === email);
-      if (users[user].email === email){
+  } else if (doesUserExist(email)){
         return res.send('Error 400: this email is already in use.')
-      }
-    }
+  } else {
+         let id = generateRandomString();
+
+    res.cookie('user_id', id)
+    users[id] = {id, email, password}
+    console.log(users[id]);
+    console.log(users);
+    res.redirect("/urls")
   }
 
-
-  let id = generateRandomString();
-
-  res.cookie('user_id', id)
-  users[id] = {id, email, password}
-  console.log(users[id]);
-  console.log(users);
-  res.redirect("/urls")
 });
 
 

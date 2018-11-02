@@ -4,8 +4,8 @@
   <title>TinyApp</title>
 </head>
 <body>
-    <% if(username){ %>
-    <h1>hello <%= users[username].email %> </h1>
+    <% if(user_id){ %>
+    <h1>hello <%= users[user_id].email %> </h1>
     <form method="GET" action="/register">
       <button>register</button>
     </form>

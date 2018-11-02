@@ -60,7 +60,7 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["user_id"],
+    user_id: req.cookies["user_id"],
     users: users
    };
   res.render("urls_index", templateVars);
@@ -85,7 +85,7 @@ app.get("/login", (req, res) => {
 
 app.get("/login", (req, res) => {
   let templateVars = {
-    username: req.cookies["user_id"],
+    user_id: req.cookies["user_id"],
     users: users
   }
   res.render("login", templateVars)
@@ -95,7 +95,7 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["user_id"],
+    user_id: req.cookies["user_id"],
     users: users
   };
   res.render("urls_show", templateVars);
@@ -141,17 +141,17 @@ if(email && password) {
     // console.log("email: " + email);
     //   console.log("users[user].email: " + users[user].email);
     if(users[user].email === email && users[user].password === password){
-      console.log("fuq ya bud")
-      res.cookie('user_id', users[user].id)
-      res.redirect('/')
+      res.cookie('user_id', users[user].id);
+      res.redirect('/');
       // console.log("user = " + user)
       // console.log("password = " + users[user].password)
     }
-    else{
-    res.status(403).send('password invalid');
   }
 }
+  else{
+    res.status(403).send('password invalid');
 }
+
   // res.send('error 403: please provide an email/password.')
 
 // check if there is an email and password entered
@@ -172,7 +172,7 @@ if(email && password) {
 });
 
 app.post("/logout", (req, res) => {
-  console.log(req.cookie)
+  // console.log(req.cookie)
   res.clearCookie('user_id');
   res.redirect("/urls")
 

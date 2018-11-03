@@ -63,22 +63,40 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+function getUrlsForUser(userid){
+ var urlsForUser={};
+ for(var key in urlDatabase){
+    if(urlDatabase[key].user_id === userid){
+      urlsForUser[key] = urlDatabase[key].longURL;
+    }
+  }
+  return urlsForUser;
+}
+
 app.get("/urls", (req, res) => {
-  let templateVars = {
-    urls: urlDatabase,
-    user_id: req.cookies["user_id"],
-    users: users,
-    getUserIdFromData: getUserIdFromData
-   };
-   let user_id = req.cookies['user_id'];
+
+  if(req.cookies["user_id"]){
+    let templateVars = {
+      urls: getUrlsForUser(req.cookies["user_id"]),
+      user_id: req.cookies["user_id"],
+      users: users,
+      //users: users,
+      //getUserIdFromData: getUserIdFromData
+  };
+    //console.log("rohit ",templateVars);
+    res.render("urls_index", templateVars);
+  } else{
+    res.send("Please register first");
+  }
+  //let user_id = req.cookies['user_id'];
   //if user is registered and logged in, they can access this page
   //check for cookie,
-  if(user_id && users[user_id]) {
-  //otherwise redirect to /urls
-  res.render("urls_index", templateVars);
-  } else {
-    res.send("please register to use tinyApp")
-  }
+  // if(user_id){//&& users[user_id]) {
+  // //otherwise redirect to /urls
+  //   res.render("urls_index", templateVars);
+  // } else {
+  //   res.send("please register to use tinyApp")
+  // }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -98,7 +116,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.render("register")
+  res.render("register");
 })
 
 app.get("/u/:shortURL", (req, res) => {
@@ -130,13 +148,16 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
 
   let longURL = req.body.longURL;// debug statement to see POST parameters
   let shortURL = generateRandomString();
   let user_id = req.cookies['user_id'];
-  urlDatabase[shortURL] = {longURL, user_id};
-  console.log(urlDatabase);
+  urlDatabase[shortURL] = {
+    longURL : longURL,
+    user_id : user_id
+  }
+  //  urlDatabase[shortURL] = {longURL, user_id};
+  //console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
 });
 

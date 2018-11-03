@@ -5,23 +5,23 @@
 </head>
 <body>
    <% include ./partials/_header %>
-    <ul>
-      List
-      <% if(getUserIdFromData(user_id)) { %>
-        <li>
-           <% urls[user_id].id %>
-           -
-          <a href="#"> <%= urls[user_id].longURL %> </a>
-          <br>
-          <form method="POST" action="/urls/<%= urls[link].userID %>/delete" >
-            <button>delete</button>
-          </form>
-          <form method="GET" action="/urls/<%= urls[link].userID %>">
-            <button>update</button>
-          </form>
-        </li>
-      <% } %>
 
+    <ul>
+      List of URLS
+      <hr/>
+      <% for(var key in urls) { %>
+        <li>ShortURL: <%= key %> | Long URL: <%= urls[key] %></li>
+        <a href="<%=urls[key]%>"> <%= urls[key] %> </a>
+
+        <form method="POST" action="/urls/<%= key %>/delete" >
+            <button>delete</button>
+        </form>
+
+        <form method="GET" action="/urls/<%= key %>">
+            <button>update</button>
+        </form>
+
+      <% } %>
     </ul>
 </body>
 </html>

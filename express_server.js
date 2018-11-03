@@ -137,6 +137,8 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
+
+  if(getUserIdFromData(req.cookies["user_id"])){
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
@@ -145,6 +147,7 @@ app.get("/urls/:id", (req, res) => {
 
   };
   res.render("urls_show", templateVars);
+  }
 });
 
 app.post("/urls", (req, res) => {
@@ -158,18 +161,22 @@ app.post("/urls", (req, res) => {
   }
   //  urlDatabase[shortURL] = {longURL, user_id};
   //console.log(urlDatabase);
-  res.redirect(`/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls`);         // Respond with 'Ok' (we will replace this)
 });
 
+
+
 app.post("/urls/:id/delete", (req, res) => {
-  let user_id = req.cookies["user_id"];
-  if(getUserIdFromData(user_id)){
-    DeleteUserIdFromData(user_id);
-  res.redirect("/urls");
-  } else {
+
+    let user_id = req.cookies["user_id"];
+    if(user_id){
+      delete urlDatabase[req.params.id];
+      //delete the id
+    } else{
+      res.send('sorry you are not logged in');
+    }
     res.redirect("/urls");
-  }
-})
+  });
 
 app.post("/urls/:id/update", (req, res) => {
   console.log(req.body);

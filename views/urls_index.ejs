@@ -14,7 +14,7 @@
         <a href="<%=urls[key]%>"> <%= urls[key] %> </a>
 
         <form method="POST" action="/urls/<%= key %>/delete" >
-            <button>delete</button>
+            <button name= "<%= urls[key] %>">delete</button>
         </form>
 
         <form method="GET" action="/urls/<%= key %>">

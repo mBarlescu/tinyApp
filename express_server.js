@@ -25,11 +25,17 @@ let users = {
     email: "user2@example.com",
     password: "asdf"
   }
-}
+};
 
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: 'default'
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: 'default'
+    }
 };
 
 
@@ -63,7 +69,15 @@ app.get("/urls", (req, res) => {
     user_id: req.cookies["user_id"],
     users: users
    };
+   let user_id = req.cookies['user_id'];
+  //if user is registered and logged in, they can access this page
+  //check for cookie,
+  if(user_id && users[user_id]) {
+  //otherwise redirect to /urls
   res.render("urls_index", templateVars);
+  } else {
+    res.send("please register to use tinyApp")
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -115,6 +129,7 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body);
+
   let longURL = req.body.longURL;// debug statement to see POST parameters
   let shortURL = generateRandomString();
   let userID = req.cookies['user_id'];

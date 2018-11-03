@@ -30,11 +30,11 @@ let users = {
 var urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
-    userID: 'default'
+    user_id: 'default'
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
-    userID: 'default'
+    user_id: 'default'
     }
 };
 
@@ -84,7 +84,7 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   let templateVars = {
     user_id: req.cookies["user_id"],
-    users: users
+    users: users,
   }
   let user_id = req.cookies['user_id'];
   //if user is registered and logged in, they can access this page
@@ -123,8 +123,8 @@ app.get("/urls/:id", (req, res) => {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
     user_id: req.cookies["user_id"],
-    usersid: users.id,
-    usersLongURL: users.longURL
+    users: users
+
   };
   res.render("urls_show", templateVars);
 });
@@ -134,10 +134,10 @@ app.post("/urls", (req, res) => {
 
   let longURL = req.body.longURL;// debug statement to see POST parameters
   let shortURL = generateRandomString();
-  let userID = req.cookies['user_id'];
-  urlDatabase[shortURL] = {longURL, userID};
+  let user_id = req.cookies['user_id'];
+  urlDatabase[shortURL] = {longURL, user_id};
   console.log(urlDatabase);
-  res.redirect(`http://localhost:8080/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
 });
 
 app.post("/urls/:id/delete", (req, res) => {

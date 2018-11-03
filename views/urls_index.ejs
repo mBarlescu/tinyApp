@@ -7,12 +7,11 @@
    <% include ./partials/_header %>
     <ul>
       List
-       <% if(getUserIdFromData(user_id)){ %>
-
+      <% if(getUserIdFromData(user_id)) { %>
         <li>
-          <%= usersLongURL  %>
+           <% urls[user_id].id %>
            -
-          <a href="#"> <%= usersid %> </a>
+          <a href="#"> <%= urls[user_id].longURL %> </a>
           <br>
           <form method="POST" action="/urls/<%= urls[link].userID %>/delete" >
             <button>delete</button>
@@ -21,8 +20,6 @@
             <button>update</button>
           </form>
         </li>
-      <% } else { %>
-      <% return %>
       <% } %>
 
     </ul>

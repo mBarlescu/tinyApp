@@ -67,7 +67,8 @@ app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
     user_id: req.cookies["user_id"],
-    users: users
+    users: users,
+    getUserIdFromData: getUserIdFromData
    };
    let user_id = req.cookies['user_id'];
   //if user is registered and logged in, they can access this page
@@ -122,7 +123,8 @@ app.get("/urls/:id", (req, res) => {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
     user_id: req.cookies["user_id"],
-    users: users
+    usersid: users.id,
+    usersLongURL: users.longURL
   };
   res.render("urls_show", templateVars);
 });

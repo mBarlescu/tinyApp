@@ -7,19 +7,22 @@
    <% include ./partials/_header %>
     <ul>
       List
-      <% for(var link in urls) { %>
+       <% if(getUserIdFromData(user_id)){ %>
+
         <li>
-          <%= link  %>
+          <%= usersLongURL  %>
            -
-          <a href="#"> <%= urls[link].longURL %> </a>
+          <a href="#"> <%= usersid %> </a>
           <br>
-          <form method="POST" action="/urls/<%= link %>/delete" >
+          <form method="POST" action="/urls/<%= urls[link].userID %>/delete" >
             <button>delete</button>
           </form>
-          <form method="GET" action="/urls/<%= link %>">
+          <form method="GET" action="/urls/<%= urls[link].userID %>">
             <button>update</button>
           </form>
         </li>
+      <% } else { %>
+      <% return %>
       <% } %>
 
     </ul>

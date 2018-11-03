@@ -198,7 +198,7 @@ app.post("/urls/:id/update", (req, res) => {
   //   user_id: req.cookies["user_id"],
   //   users: users
   // }
-    res.redirect(`/urls/${shortURL}`);
+    res.redirect(`/urls`);
   } else {
     console.log("Didn't get data");
     res.redirect("/urls");

@@ -137,8 +137,8 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-
-  if(getUserIdFromData(req.cookies["user_id"])){
+let user_id = req.cookies['user_id'];
+  if(user_id){
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
@@ -171,6 +171,7 @@ app.post("/urls/:id/delete", (req, res) => {
     let user_id = req.cookies["user_id"];
     if(user_id){
       delete urlDatabase[req.params.id];
+      console.log(req.params.id)
       //delete the id
     } else{
       res.send('sorry you are not logged in');
@@ -182,19 +183,22 @@ app.post("/urls/:id/update", (req, res) => {
   console.log(req.body);
   let user_id = req.cookies["user_id"];
 
-  let templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL,
-    user_id: req.cookies["user_id"],
-    users: users
-  };
-  if(getUserIdFromData(user_id)){
+  if(user_id){
     // console.log(("Got data"))
     delete urlDatabase[req.params.id];
     let longURL = req.body.input;
-    let shortURL = generateRandomString();
-    urlDatabase[shortURL] = longURL;
-    res.redirect(`/urls/${shortURL}`)
+    let shortURL  = generateRandomString();
+    urlDatabase[shortURL] = {
+      longURL, user_id
+    }
+    console.log(urlDatabase)
+  // let templateVars = {
+  //   shortURL: req.params.id,
+  //   longURL: urlDatabase[r].longURL,
+  //   user_id: req.cookies["user_id"],
+  //   users: users
+  // }
+    res.redirect(`/urls/${shortURL}`);
   } else {
     console.log("Didn't get data");
     res.redirect("/urls");

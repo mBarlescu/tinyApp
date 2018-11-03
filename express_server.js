@@ -71,7 +71,15 @@ app.get("/urls/new", (req, res) => {
     user_id: req.cookies["user_id"],
     users: users
   }
+  let user_id = req.cookies['user_id'];
+  //if user is registered and logged in, they can access this page
+  //check for cookie,
+  if(user_id && users[user_id]) {
+  //otherwise redirect to /urls
   res.render("urls_new", templateVars);
+  } else {
+    res.redirect('/login')
+  }
 });
 
 app.get("/register", (req, res) => {
@@ -98,7 +106,7 @@ app.get("/login", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id].longURL,
     user_id: req.cookies["user_id"],
     users: users
   };
@@ -109,7 +117,8 @@ app.post("/urls", (req, res) => {
   console.log(req.body);
   let longURL = req.body.longURL;// debug statement to see POST parameters
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL;
+  let userID = req.cookies['user_id'];
+  urlDatabase[shortURL] = {longURL, userID};
   console.log(urlDatabase);
   res.redirect(`http://localhost:8080/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
 });
@@ -128,9 +137,16 @@ app.post("/urls/:id/update", (req, res) => {
   res.redirect(`http://localhost:8080/urls/${shortURL}`)
 });
 
+//make function to enter in userID from data base, and if it is registered and matches the id for the url, then it can delete
 
-
-
+function getUserIdFromData(user_id){
+  for(let short in urlDatabase){
+    if(urlDatabase[short].userID === user_id){
+      return urlDatabase[short]
+    }
+  }
+  return
+}
 
 
 app.post("/login", (req, res) => {
@@ -157,7 +173,7 @@ if(!email || !password) {
 app.post("/logout", (req, res) => {
   // console.log(req.cookie)
   res.clearCookie('user_id');
-  res.redirect("/urls")
+  res.redirect("/urls");
 
 
 })

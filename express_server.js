@@ -183,7 +183,7 @@ app.post("/urls/:id/update", (req, res) => {
   console.log(req.body);
   let user_id = req.cookies["user_id"];
 
-  if(user_id){
+  if(user_id === getUserIdFromShortURL(req.params.id, user_id)){
     // console.log(("Got data"))
     delete urlDatabase[req.params.id];
     let longURL = req.body.input;
@@ -207,14 +207,14 @@ app.post("/urls/:id/update", (req, res) => {
 
 //make function to enter in userID from data base, and if it is registered and matches the id for the url, then it can delete
 
-function getUserIdFromData(user_id){
-  for(let short in urlDatabase){
-    if(urlDatabase[short].userID === user_id){
-      return true;
-    }
+function getUserIdFromShortURL(short, user){
+    if(urlDatabase[short].user_id === user){
+      return urlDatabase[short].user_id;
+  } else {
+    return;
   }
-  return
-}
+};
+
 // function DeleteUserIdFromData(user_id, link_id){
 function DeleteUserIdFromData(user_id){
   for(let short in urlDatabase){

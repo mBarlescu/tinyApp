@@ -124,17 +124,36 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
+  let user_id = req.cookies["user_id"];
+  if(getUserIdFromData(user_id)){
+    DeleteUserIdFromData(user_id);
   res.redirect("/urls");
+  } else {
+    res.redirect("/urls");
+  }
 })
 
 app.post("/urls/:id/update", (req, res) => {
   console.log(req.body);
-  delete urlDatabase[req.params.id];
-  let longURL = req.body.input;
-  let shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL;
-  res.redirect(`http://localhost:8080/urls/${shortURL}`)
+  let user_id = req.cookies["user_id"];
+
+  let templateVars = {
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id].longURL,
+    user_id: req.cookies["user_id"],
+    users: users
+  };
+  if(getUserIdFromData(user_id)){
+    // console.log(("Got data"))
+    delete urlDatabase[req.params.id];
+    let longURL = req.body.input;
+    let shortURL = generateRandomString();
+    urlDatabase[shortURL] = longURL;
+    res.redirect(`/urls/${shortURL}`)
+  } else {
+    console.log("Didn't get data");
+    res.redirect("/urls");
+  }
 });
 
 //make function to enter in userID from data base, and if it is registered and matches the id for the url, then it can delete
@@ -142,7 +161,18 @@ app.post("/urls/:id/update", (req, res) => {
 function getUserIdFromData(user_id){
   for(let short in urlDatabase){
     if(urlDatabase[short].userID === user_id){
-      return urlDatabase[short]
+      return true;
+    }
+  }
+  return
+}
+// function DeleteUserIdFromData(user_id, link_id){
+function DeleteUserIdFromData(user_id){
+  for(let short in urlDatabase){
+    if(urlDatabase[short].userID === user_id ){
+       // if(urlDatabase[short].userID === user_id && if urlDatabase[short] === link_id){
+      // console.log("LINK ID:", urlDatabase[link_id]);
+      delete urlDatabase[short];
     }
   }
   return

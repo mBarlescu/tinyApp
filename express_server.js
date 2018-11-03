@@ -142,7 +142,7 @@ let password = req.body.password;
 // console.log(password);
 if(!email || !password) {
   res.status(403).send('missing email/password');
-}  else if(doesUserExist(email) && doesPasswordMatch(password)) {
+}  else if(doesUserExist(email) && gettingPasswordFromEmail(email) === password) {
 
       for(let user in users){
          if(users[user].email === email){
@@ -150,7 +150,7 @@ if(!email || !password) {
     }
   }
       res.redirect('/');
-    } else {res.status(403).send('email not registered')
+    } else {res.status(403).send('email not registered or wrong password')
 }
 });
 
@@ -169,13 +169,13 @@ function doesUserExist(email){
   }
   return false
 }
-function doesPasswordMatch(password){
-  for (let user in users) {
-    if(users[user].password === password){
-      return true
+function gettingPasswordFromEmail(email){
+  for(let user in users){
+    if(users[user].email === email){
+      return users[user].password
     }
   }
-  return false
+  return
 }
 
 app.post("/register", (req, res) => {

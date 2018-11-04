@@ -2,13 +2,19 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-var cookieParser = require('cookie-parser');
+var cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secrets'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 
 
@@ -73,10 +79,10 @@ function getUrlsForUser(userid){
 
 app.get("/urls", (req, res) => {
 
-  if(req.cookies["user_id"]){
+  if(req.session.user_id){
     let templateVars = {
-      urls: getUrlsForUser(req.cookies["user_id"]),
-      user_id: req.cookies["user_id"],
+      urls: getUrlsForUser(req.session.user_id),
+      user_id: req.session.user_id,
       users: users,
       //users: users,
       //getUserIdFromData: getUserIdFromData
@@ -86,7 +92,7 @@ app.get("/urls", (req, res) => {
   } else{
     res.send("Please register first");
   }
-  //let user_id = req.cookies['user_id'];
+  //let user_id = req.session.user_id;
   //if user is registered and logged in, they can access this page
   //check for cookie,
   // if(user_id){//&& users[user_id]) {
@@ -99,10 +105,10 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    user_id: req.cookies["user_id"],
+    user_id: req.session.user_id,
     users: users,
   }
-  let user_id = req.cookies['user_id'];
+  let user_id = req.session.user_id;
   //if user is registered and logged in, they can access this page
   //check for cookie,
   if(user_id && users[user_id]) {
@@ -125,19 +131,19 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/login", (req, res) => {
   let templateVars = {
-    user_id: req.cookies["user_id"],
+    user_id: req.session.user_id,
     users: users
   }
   res.render("login", templateVars)
 });
 
 app.get("/urls/:id", (req, res) => {
-let user_id = req.cookies['user_id'];
+let user_id = req.session.user_id;
   if(user_id){
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
-    user_id: req.cookies["user_id"],
+    user_id: req.session.user_id,
     users: users
 
   };
@@ -149,7 +155,7 @@ app.post("/urls", (req, res) => {
 
   let longURL = req.body.longURL;// debug statement to see POST parameters
   let shortURL = generateRandomString();
-  let user_id = req.cookies['user_id'];
+  let user_id = req.session.user_id;
   urlDatabase[shortURL] = {
     longURL : longURL,
     user_id : user_id
@@ -163,7 +169,7 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
 
-    let user_id = req.cookies["user_id"];
+    let user_id = req.session.user_id;
     if(user_id){
       delete urlDatabase[req.params.id];
       console.log(req.params.id)
@@ -176,7 +182,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls/:id/update", (req, res) => {
   console.log(req.body);
-  let user_id = req.cookies["user_id"];
+  let user_id = req.session.user_id;
 
   if(user_id === getUserIdFromShortURL(req.params.id, user_id)){
     // console.log(("Got data"))
@@ -190,7 +196,7 @@ app.post("/urls/:id/update", (req, res) => {
   // let templateVars = {
   //   shortURL: req.params.id,
   //   longURL: urlDatabase[r].longURL,
-  //   user_id: req.cookies["user_id"],
+  //   user_id: req.session.user_id,
   //   users: users
   // }
     res.redirect(`/urls`);
@@ -248,7 +254,7 @@ console.log(users)
 
 app.post("/logout", (req, res) => {
   // console.log(req.cookie)
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect("/urls");
 
 
@@ -281,12 +287,14 @@ app.post("/register", (req, res) => {
   } else {
          let id = generateRandomString();
 
-    res.cookie('user_id', id)
+    req.session.user_id = id;
     users[id] = {id, email, password}
     console.log(users[id]);
     console.log(users);
     res.redirect("/urls")
   }
+  console.log(users);
+  console.log(req.session.user_id)
 
 });
 

@@ -3,9 +3,7 @@ var app = express();
 var PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 var cookieParser = require('cookie-parser');
-
-
-
+const bcrypt = require('bcrypt');
 
 app.set("view engine", "ejs");
 
@@ -124,9 +122,6 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.get("/login", (req, res) => {
-  res.render("login")
-})
 
 app.get("/login", (req, res) => {
   let templateVars = {
@@ -232,12 +227,13 @@ app.post("/login", (req, res) => {
 let email = req.body.email;
 let password = req.body.password;
 
+console.log(password)
 // console.log(email);
 
 // console.log(password);
 if(!email || !password) {
   res.status(403).send('missing email/password');
-}  else if(doesUserExist(email) && gettingPasswordFromEmail(email) === password) {
+}  else if(doesUserExist(email) && bcrypt.compareSync(password, gettingPasswordFromEmail(email))) {
 
       for(let user in users){
          if(users[user].email === email){
@@ -247,6 +243,7 @@ if(!email || !password) {
       res.redirect('/');
     } else {res.status(403).send('email not registered or wrong password')
 }
+console.log(users)
 });
 
 app.post("/logout", (req, res) => {
@@ -275,7 +272,7 @@ function gettingPasswordFromEmail(email){
 
 app.post("/register", (req, res) => {
   let email = req.body.email;
-  let password = req.body.password;
+  let password = bcrypt.hashSync(req.body.password, 10);
 
   if(!email || !password){
     res.send('Error 400: please provide an email/password.');

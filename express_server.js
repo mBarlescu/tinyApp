@@ -90,7 +90,7 @@ app.get("/urls", (req, res) => {
     //console.log("rohit ",templateVars);
     res.render("urls_index", templateVars);
   } else{
-    res.send("Please register first");
+    res.send("Please register first @ /register, or login @ /login");
   }
   //let user_id = req.session.user_id;
   //if user is registered and logged in, they can access this page
@@ -246,7 +246,7 @@ if(!email || !password) {
       res.cookie('user_id', users[user].id);
     }
   }
-      res.redirect('/');
+      res.redirect('/urls');
     } else {res.status(403).send('email not registered or wrong password')
 }
 console.log(users)

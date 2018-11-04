@@ -5,7 +5,9 @@
 </head>
 <body>
    <% include ./partials/_header %>
-
+   <form method="GET" action="/urls/new">
+     <button>Create a new URL</button>
+   </form>
     <ul>
       List of URLS
       <hr/>
@@ -18,7 +20,7 @@
         </form>
 
         <form method="GET" action="/urls/<%= key %>">
-            <button>update</button>
+            <button>edit</button>
         </form>
 
       <% } %>

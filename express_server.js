@@ -55,7 +55,11 @@ function generateRandomString() {
 
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if(req.session.user_id){
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 
 });
 
@@ -124,9 +128,22 @@ app.get("/register", (req, res) => {
 })
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
+
+app.get("/urls:longURL"), (req, res) => {
+  let user_id = req.session.user_id;
+  if(user_id){
+  let templateVars = {
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id].longURL,
+    user_id: req.session.user_id,
+    users: users
+  }
+  res.render("urls_show", templateVars);
+  }
+};
 
 
 app.get("/login", (req, res) => {
@@ -243,7 +260,7 @@ if(!email || !password) {
 
       for(let user in users){
          if(users[user].email === email){
-      res.cookie('user_id', users[user].id);
+      req.session.user_id = users[user].id;
     }
   }
       res.redirect('/urls');

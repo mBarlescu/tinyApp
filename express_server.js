@@ -136,11 +136,11 @@ app.get("/urls:longURL"), (req, res) => {
   let user_id = req.session.user_id;
   if(user_id){
   let templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL,
+    longURL: req.params.longURL,
     user_id: req.session.user_id,
     users: users
   }
+  console.log(user_id);
   res.render("urls_show", templateVars);
   }
 };

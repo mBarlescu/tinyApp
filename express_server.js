@@ -121,6 +121,7 @@ app.get("/urls/new", (req, res) => {
   } else {
     res.redirect('/login')
   }
+  console.log(urlDatabase);
 });
 
 app.get("/register", (req, res) => {
@@ -128,22 +129,16 @@ app.get("/register", (req, res) => {
 })
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
-});
-
-app.get("/urls:longURL"), (req, res) => {
   let user_id = req.session.user_id;
   if(user_id){
-  let templateVars = {
-    longURL: req.params.longURL,
-    user_id: req.session.user_id,
-    users: users
+  let longURL = urlDatabase[req.params.shortURL].longURL;
+  console.log(longURL);
+  res.redirect(longURL);
+  } else {
+    res.send('please register or login first')
   }
-  console.log(user_id);
-  res.render("urls_show", templateVars);
-  }
-};
+});
+
 
 
 app.get("/login", (req, res) => {
@@ -163,7 +158,7 @@ let user_id = req.session.user_id;
     user_id: req.session.user_id,
     users: users
 
-  };
+  }
   res.render("urls_show", templateVars);
   }
 });
@@ -179,7 +174,8 @@ app.post("/urls", (req, res) => {
   }
   //  urlDatabase[shortURL] = {longURL, user_id};
   //console.log(urlDatabase);
-  res.redirect(`/urls`);         // Respond with 'Ok' (we will replace this)
+  console.log(urlDatabase);
+  res.redirect(`/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
 });
 
 

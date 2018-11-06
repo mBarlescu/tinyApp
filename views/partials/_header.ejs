@@ -6,6 +6,9 @@
 <body>
     <% if(user_id){ %>
     <h1>hello <%= users[user_id].email %> </h1>
+    <form metho= "GET" action="/urls">
+      <button>home</button>
+    </form>
     <form method ="POST" action ="/logout">
       <button>logout</button>
     </form>
